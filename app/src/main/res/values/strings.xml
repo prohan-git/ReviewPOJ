@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">ReviewPOJ</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="handler_postdelayed">handler_postdelayed</string>
+    <string name="timertask">timertask</string>
+    <string name="scheduled">scheduled</string>
+    <string name="rxjava">rxjava</string>
+    <string name="conuntdown">conuntdown</string>
+    <string name="start">START</string>
+    <string name="done">DONE</string>
+    <string name="alarm_manager">AlarmManager</string>
+</resources>
