@@ -19,19 +19,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ServiceTasks.LoopTaskActivity" />
 
-        <receiver android:name=".ServiceTasks.LongConnActivity$KeepAliveReceiver">
+
+        <receiver android:name=".serviceTasks.LongConnActivity$KeepAliveReceiver">
             <intent-filter>
                 <action android:name="ALERT_KEEP_ACTION" />
             </intent-filter>
         </receiver>
-
+        <activity android:name=".serviceTasks.LoopTaskActivity"
+            android:label="@string/title_activity_loop_task"/>
         <activity
-            android:name=".ServiceTasks.LongConnActivity"
-            android:label="LongConn">
+            android:name=".serviceTasks.LongConnActivity"
+            android:label="@string/title_activity_long_coon"/>
+        <activity
+            android:name=".ui.CustomUIActivity"
+            android:label="@string/title_activity_custom_ui"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
-        </activity>
     </application>
 
 </manifest>
