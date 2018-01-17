@@ -71,8 +71,7 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+
 
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -92,7 +91,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         }
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         return true;
     }
 }
