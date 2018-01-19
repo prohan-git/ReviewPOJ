@@ -29,4 +29,5 @@
     <string name="custom_ui">自定义UI</string>
     <string name="title_activity_long_coon">LongConn</string>
     <string name="title_activity_loop_task">loopTask</string>
+    <string name="title_activity_iik_player">IikPlayerActivity</string>
 </resources>

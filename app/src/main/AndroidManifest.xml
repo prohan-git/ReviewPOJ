@@ -2,7 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.tjun.reviewpoj">
 
+    <!-- 请求访问网络 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- 录音权限 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,22 +33,27 @@
             </intent-filter>
         </activity>
 
-
         <receiver android:name=".serviceTasks.LongConnActivity$KeepAliveReceiver">
             <intent-filter>
                 <action android:name="ALERT_KEEP_ACTION" />
             </intent-filter>
         </receiver>
-        <activity android:name=".serviceTasks.LoopTaskActivity"
-            android:label="@string/title_activity_loop_task"/>
+
+        <activity
+            android:name=".serviceTasks.LoopTaskActivity"
+            android:label="@string/title_activity_loop_task" />
         <activity
             android:name=".serviceTasks.LongConnActivity"
-            android:label="@string/title_activity_long_coon"/>
+            android:label="@string/title_activity_long_coon" />
         <activity
             android:name=".ui.CustomUIActivity"
             android:label="@string/title_activity_custom_ui"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".media.MediaPlayActivity" />
+        <activity
+            android:name=".media.IikPlayerActivity"
+            android:label="@string/title_activity_iik_player"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
