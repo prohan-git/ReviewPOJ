@@ -2,6 +2,9 @@ package com.example.tjun.reviewpoj.application;
 
 import android.app.Application;
 
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
+
 public class App extends Application {
     private static App INSTANCE;
 
@@ -13,5 +16,10 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         INSTANCE = this;
+        initModule();
+    }
+
+    private void initModule() {
+        Logger.addLogAdapter(new AndroidLogAdapter());
     }
 }

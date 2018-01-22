@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 import com.example.tjun.reviewpoj.media.IikPlayerActivity;
 import com.example.tjun.reviewpoj.media.MediaPlayActivity;
+import com.example.tjun.reviewpoj.media.SoundsRecorderActivity;
 import com.example.tjun.reviewpoj.serviceTasks.LongConnActivity;
 import com.example.tjun.reviewpoj.serviceTasks.LoopTaskActivity;
 import com.example.tjun.reviewpoj.ui.CustomUIActivity;
@@ -85,10 +86,8 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, LongConnActivity.class));
         } else if (id == R.id.nav_ui) {
             startActivity(new Intent(this, CustomUIActivity.class));
-
         } else if (id == R.id.nav_manage) {
-            startActivity(new Intent(this, MediaPlayActivity.class));
-
+            startActivity(new Intent(this, SoundsRecorderActivity.class));
         } else if (id == R.id.nav_share) {
             startActivity(new Intent(this, IikPlayerActivity.class));
         } else if (id == R.id.nav_send) {

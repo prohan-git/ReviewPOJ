@@ -53,7 +53,8 @@
         <activity
             android:name=".media.IikPlayerActivity"
             android:label="@string/title_activity_iik_player"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".media.SoundsRecorderActivity"></activity>
     </application>
 
 </manifest>
