@@ -3,18 +3,18 @@ package com.example.tjun.reviewpoj.media;
 import android.Manifest;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.tjun.mp3recorder.player.AudioPlayer;
 import com.example.tjun.mp3recorder.recorder.MP3Recorder;
 import com.example.tjun.mp3recorder.utils.FileUtils;
 import com.example.tjun.reviewpoj.R;
 import com.example.tjun.reviewpoj.application.BaseActivity;
+import com.example.tjun.reviewpoj.ui.common.ViewDialogFragment;
 import com.example.tjun.reviewpoj.utils.Utils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -26,7 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SoundsRecorderActivity extends BaseActivity {
+public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFragment.Callback {
 
     @BindView(R.id.btn_recorder_init)
     Button btnRecorderInit;
@@ -35,7 +35,6 @@ public class SoundsRecorderActivity extends BaseActivity {
 
     String filePath;
     private MP3Recorder mRecorder;
-    AudioPlayer audioPlayer;
     private boolean mIsRecord;
     boolean mIsPlay = false;
 
@@ -62,30 +61,7 @@ public class SoundsRecorderActivity extends BaseActivity {
 
     private void initPlayer() {
 
-        audioPlayer = new AudioPlayer(this, new  Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                switch (msg.what) {
-                    case AudioPlayer.HANDLER_CUR_TIME://更新的时间
-                        //                        curPosition = (int) msg.obj;
-                        //                        playText.setText(toTime(curPosition) + " / " + toTime(duration));
-                        break;
-                    case AudioPlayer.HANDLER_COMPLETE://播放结束
-                        //                        playText.setText(" ");
-                        mIsPlay = false;
-                        break;
-                    case AudioPlayer.HANDLER_PREPARED://播放开始
-                        //                        duration = (int) msg.obj;
-                        //                        playText.setText(toTime(curPosition) + " / " + toTime(duration));
-                        break;
-                    case AudioPlayer.HANDLER_ERROR://播放错误
-                        resolveResetPlay();
-                        break;
-                }
 
-            }
-        });
     }
 
     @Override
@@ -94,10 +70,7 @@ public class SoundsRecorderActivity extends BaseActivity {
         if (mIsRecord) {
             resolveStopRecord();
         }
-        if (mIsPlay) {
-            audioPlayer.pause();
-            audioPlayer.stop();
-        }
+
         //        if (wavePopWindow != null) {
         //            wavePopWindow.onPause();
         //        }
@@ -107,7 +80,11 @@ public class SoundsRecorderActivity extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_recorder_init:
-                resolveRecord();
+                if (!mIsRecord) {
+                    resolveRecord();
+                } else {
+                    resolvePause();
+                }
                 break;
             case R.id.btn_recorder_stop:
                 resolveStopRecord();
@@ -164,15 +141,20 @@ public class SoundsRecorderActivity extends BaseActivity {
 
         try {
             mRecorder.start();
-            //            audioWave.startView();
+//            audioWave.startView();
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(mContext, "录音出现异常", Toast.LENGTH_SHORT).show();
             resolveError();
             return;
         }
-        //        resolveRecordUI();
+        resolveRecordUI();
         mIsRecord = true;
+    }
+
+    private void resolveRecordUI() {
+        btnRecorderInit.setText("暂停");
+        btnRecorderStop.setEnabled(true);
     }
 
     /**
@@ -186,7 +168,10 @@ public class SoundsRecorderActivity extends BaseActivity {
             //            audioWave.stopView();
         }
         mIsRecord = false;
-        //        recordPause.setText("暂停");
+        btnRecorderInit.setText("开始");
+        btnRecorderStop.setEnabled(false);
+        ViewDialogFragment viewDialogFragment = new ViewDialogFragment();
+        viewDialogFragment.show(getSupportFragmentManager());
 
     }
 
@@ -214,7 +199,6 @@ public class SoundsRecorderActivity extends BaseActivity {
         }
         //        playText.setText(" ");
         mIsPlay = true;
-        audioPlayer.playUrl(filePath);
         //        resolvePlayUI();
     }
 
@@ -226,7 +210,6 @@ public class SoundsRecorderActivity extends BaseActivity {
         //  playText.setText("");
         if (mIsPlay) {
             mIsPlay = false;
-            audioPlayer.pause();
         }
         // resolveNormalUI();
     }
@@ -241,10 +224,34 @@ public class SoundsRecorderActivity extends BaseActivity {
         if (mRecorder.isPause()) {
             //            resolveRecordUI();
             mRecorder.setPause(false);
-            //            recordPause.setText("暂停");
-        } else {
+            btnRecorderInit.setText("暂停");
+        } else {//
             mRecorder.setPause(true);
-            //            recordPause.setText("继续");
+            btnRecorderInit.setText("继续");
         }
+    }
+
+    @Override
+    public void onViewDialogFragmentPositive(String fileName) {
+        //3-2.得到新全路径
+        String newPath = FileUtils.getAppPath() + fileName + ".mp3";//Util.makePath（String, String）-自定义方法：根据根路径和文件名形成新的完整路径
+        Log.d("11", "Rename---new Path = " + newPath);
+
+        File newFile = new File(newPath);
+        //6.判断是否已经存在同样名称的文件（即出现重名）
+        if (newFile.exists()) { //出现重命名且不允许生成副本名
+            Log.e("11", "Rename: duplication of name");
+            Toast.makeText(mContext, "重复了", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!FileUtils.rename(filePath, newFile)) {
+                FileUtils.deleteFile(filePath);
+            }
+        }
+
+    }
+
+    @Override
+    public void onViewDialogFragmentCancle() {
+        FileUtils.deleteFile(filePath);
     }
 }
