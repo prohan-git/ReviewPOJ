@@ -21,5 +21,6 @@ public class App extends Application {
 
     private void initModule() {
         Logger.addLogAdapter(new AndroidLogAdapter());
+        Logger.d("init Success");
     }
 }

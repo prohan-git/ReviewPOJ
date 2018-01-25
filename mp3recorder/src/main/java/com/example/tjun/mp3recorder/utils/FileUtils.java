@@ -73,4 +73,16 @@ public class FileUtils {
         }
         return false;
     }
+
+    /*
+    path:为目录的路径
+    String SDCarePath=Environment.getExternalStorageDirectory().toString();
+     String path=SDCarePath+"/Test";
+     Test为存放文件的目录
+     */
+    public static File[] getFiles(String path){
+        File file=new File(path);
+        File[] files=file.listFiles();
+        return files;
+    }
 }

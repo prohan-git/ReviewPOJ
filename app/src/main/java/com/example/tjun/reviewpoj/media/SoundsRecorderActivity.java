@@ -47,6 +47,8 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
     boolean mIsPlay = false;
     private ViewDialogFragment viewDialogFragment;
     private SectionsPagerAdapter mSectionsPagerAdapter;
+    private SoundsRecorderLivingFragment soundsRecorderLivingFragment;
+    private SoundsRecorderListFragment soundsRecorderListFragment;
 
 
     @Override
@@ -73,6 +75,9 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         container.setAdapter(mSectionsPagerAdapter);
         btnRecorderStop.setEnabled(false);
+
+        soundsRecorderLivingFragment = SoundsRecorderLivingFragment.newInstance("1", "1");
+        soundsRecorderListFragment = SoundsRecorderListFragment.newInstance("1", "1");
 
     }
 
@@ -108,6 +113,7 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
      * 开始录音
      */
     private void resolveRecord() {
+        container.setCurrentItem(0);
         filePath = FileUtils.getAppPath();
         File file = new File(filePath);
         if (!file.exists()) {
@@ -116,7 +122,6 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
                 return;
             }
         }
-
         int offset = (int) Utils.dpToPixel(1);
         filePath = FileUtils.getAppPath() + UUID.randomUUID().toString() + ".mp3";
         mRecorder = new MP3Recorder(new File(filePath));
@@ -185,6 +190,7 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
         viewDialogFragment = new ViewDialogFragment();
         viewDialogFragment.show(getSupportFragmentManager());
 
+
     }
 
     /**
@@ -243,6 +249,10 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
         }
     }
 
+    /**
+     * 确定按钮的回调事件
+     * @param fileName
+     */
 
     @Override
     public void onViewDialogFragmentPositive(String fileName) {
@@ -258,6 +268,8 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
         } else {
             if (FileUtils.rename(filePath, newFile)) {
                 viewDialogFragment.dismiss();
+                container.setCurrentItem(1);
+                soundsRecorderListFragment.refresh();
             }
         }
 
@@ -286,10 +298,9 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
 
             switch (position) {
                 case 0:
-                    return SoundsRecorderLivingFragment.newInstance("1", "1");
-
+                    return soundsRecorderLivingFragment == null ? SoundsRecorderLivingFragment.newInstance("1", "1") : soundsRecorderLivingFragment;
                 default:
-                    return SoundsRecorderListFragment.newInstance("1", "1");
+                    return soundsRecorderListFragment == null ? SoundsRecorderListFragment.newInstance("1", "1") : soundsRecorderListFragment;
             }
 
         }

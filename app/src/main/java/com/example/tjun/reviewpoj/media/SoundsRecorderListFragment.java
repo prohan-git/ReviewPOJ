@@ -3,41 +3,51 @@ package com.example.tjun.reviewpoj.media;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.tjun.mp3recorder.utils.FileUtils;
 import com.example.tjun.reviewpoj.R;
+import com.example.tjun.reviewpoj.application.BaseFragment;
+import com.example.tjun.reviewpoj.media.adapter.SoundsListAdapter;
+import com.orhanobut.logger.Logger;
+
+import java.io.File;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link SoundsRecorderListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SoundsRecorderListFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+public class SoundsRecorderListFragment extends BaseFragment {
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+    @BindView(R.id.rv_recorder)
+    RecyclerView rvRecorder;
+    Unbinder unbinder;
+
+    File[] files;
+
     private String mParam1;
     private String mParam2;
+    private SoundsListAdapter recorderListAdapter;
 
 
     public SoundsRecorderListFragment() {
-        // Required empty public constructor
+
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SoundsRecorderListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static SoundsRecorderListFragment newInstance(String param1, String param2) {
         SoundsRecorderListFragment fragment = new SoundsRecorderListFragment();
         Bundle args = new Bundle();
@@ -60,7 +70,48 @@ public class SoundsRecorderListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sounds_recorder_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_sounds_recorder_list, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        initViews();
+        initData();
+        loadList();
+
+        return view;
     }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
+    private void initViews() {
+        // 设置布局管理器
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        rvRecorder.setLayoutManager(mLayoutManager);
+        recorderListAdapter = new SoundsListAdapter(rvRecorder);
+        rvRecorder.setAdapter(recorderListAdapter);
+    }
+
+    /**
+     * 获取录音列表
+     */
+    private void initData() {
+        files = FileUtils.getFiles(FileUtils.getAppPath());
+        for (int i = 0; i < files.length; i++) {
+            Logger.d(files[i].getAbsolutePath() + "");
+        }
+    }
+
+    private void loadList() {
+        recorderListAdapter.setData(files);
+    }
+
+
+    public void refresh() {
+        files = null;
+        initData();
+        loadList();
+    }
 }
