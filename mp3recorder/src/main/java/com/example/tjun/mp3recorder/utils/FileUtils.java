@@ -24,8 +24,7 @@ public class FileUtils {
         if (SD_STATE.equals(android.os.Environment.MEDIA_MOUNTED)) {
             sb.append(SD_PATH);
         } else {
-//            sb.append(DATA_PATH);
-
+//           sb.append(DATA_PATH);
         }
         sb.append(File.separator);
         sb.append(NAME);

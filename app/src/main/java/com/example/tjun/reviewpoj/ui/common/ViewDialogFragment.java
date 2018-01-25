@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.tjun.reviewpoj.R;
 
@@ -36,24 +38,44 @@ public class ViewDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = inflater.inflate(R.layout.dialog_signin, null);
-        builder.setView(view)
-                .setCancelable(true)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (callback != null) {
-                            EditText et_fileName = (EditText) view.findViewById(R.id.et_file_name);
-                            callback.onViewDialogFragmentPositive(et_fileName.getText().toString());
-                        }
-                    }
-                }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+        builder.setView(view).setCancelable(false).setTitle(getString(R.string.name_and_save));
+
+
+        // 创建对话框
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
-            public void onCancel(DialogInterface dialogInterface) {
+            public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
+                if (i == KeyEvent.KEYCODE_BACK) {
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
+        EditText et_fileName = (EditText) view.findViewById(R.id.et_file_name);
+        TextView btn_positive = view.findViewById(R.id.btn_positive);
+        TextView btn_delete = view.findViewById(R.id.btn_cancle);
+        btn_positive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callback.onViewDialogFragmentPositive(et_fileName.getText().toString());
+            }
+        });
+
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 callback.onViewDialogFragmentCancle();
             }
-        })
-        ;
-        return builder.create();
+        });
+
+
+
+
+        return alertDialog;
     }
 
     @Override

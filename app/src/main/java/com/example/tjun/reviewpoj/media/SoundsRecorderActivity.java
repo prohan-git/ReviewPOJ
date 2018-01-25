@@ -1,9 +1,13 @@
 package com.example.tjun.reviewpoj.media;
 
 import android.Manifest;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +18,8 @@ import com.example.tjun.mp3recorder.recorder.MP3Recorder;
 import com.example.tjun.mp3recorder.utils.FileUtils;
 import com.example.tjun.reviewpoj.R;
 import com.example.tjun.reviewpoj.application.BaseActivity;
+import com.example.tjun.reviewpoj.ui.CustomUIActivity;
+import com.example.tjun.reviewpoj.ui.TestLayoutFragment;
 import com.example.tjun.reviewpoj.ui.common.ViewDialogFragment;
 import com.example.tjun.reviewpoj.utils.Utils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -32,25 +38,28 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
     Button btnRecorderInit;
     @BindView(R.id.btn_recorder_stop)
     Button btnRecorderStop;
+    @BindView(R.id.container)
+    ViewPager container;
 
     String filePath;
     private MP3Recorder mRecorder;
     private boolean mIsRecord;
     boolean mIsPlay = false;
+    private ViewDialogFragment viewDialogFragment;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sounds_recorder);
-
         ButterKnife.bind(this);
         RxPermissions rxPermissions = new RxPermissions(this); // where this is an Activity instance
         // Must be done during an initialization phase like onCreate
         rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO).subscribe(granted -> {
             if (granted) { // Always true pre-M
                 // I can control the camera now
-                initPlayer();
+                initRecorder();
             } else {
                 // Oups permission denied
                 onBackPressed();
@@ -59,8 +68,11 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
     }
 
 
-    private void initPlayer() {
-
+    private void initRecorder() {
+        //设置pageAdapter
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        container.setAdapter(mSectionsPagerAdapter);
+        btnRecorderStop.setEnabled(false);
 
     }
 
@@ -141,7 +153,7 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
 
         try {
             mRecorder.start();
-//            audioWave.startView();
+            //            audioWave.startView();
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(mContext, "录音出现异常", Toast.LENGTH_SHORT).show();
@@ -170,7 +182,7 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
         mIsRecord = false;
         btnRecorderInit.setText("开始");
         btnRecorderStop.setEnabled(false);
-        ViewDialogFragment viewDialogFragment = new ViewDialogFragment();
+        viewDialogFragment = new ViewDialogFragment();
         viewDialogFragment.show(getSupportFragmentManager());
 
     }
@@ -231,20 +243,21 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
         }
     }
 
+
     @Override
     public void onViewDialogFragmentPositive(String fileName) {
         //3-2.得到新全路径
         String newPath = FileUtils.getAppPath() + fileName + ".mp3";//Util.makePath（String, String）-自定义方法：根据根路径和文件名形成新的完整路径
-        Log.d("11", "Rename---new Path = " + newPath);
+        Log.d("Dialog", "Rename---new Path = " + newPath);
 
         File newFile = new File(newPath);
         //6.判断是否已经存在同样名称的文件（即出现重名）
         if (newFile.exists()) { //出现重命名且不允许生成副本名
-            Log.e("11", "Rename: duplication of name");
-            Toast.makeText(mContext, "重复了", Toast.LENGTH_SHORT).show();
+            Log.e("Dialog", "Rename: duplication of name");
+            Toast.makeText(mContext, R.string.duplication_of_name, Toast.LENGTH_SHORT).show();
         } else {
-            if (!FileUtils.rename(filePath, newFile)) {
-                FileUtils.deleteFile(filePath);
+            if (FileUtils.rename(filePath, newFile)) {
+                viewDialogFragment.dismiss();
             }
         }
 
@@ -253,5 +266,38 @@ public class SoundsRecorderActivity extends BaseActivity implements ViewDialogFr
     @Override
     public void onViewDialogFragmentCancle() {
         FileUtils.deleteFile(filePath);
+        viewDialogFragment.dismiss();
+    }
+
+
+    /***
+     * Adapter设置每页的Fragment
+     */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            // getItem is called to instantiate the fragment for the given page.
+            // Return a PlaceholderFragment (defined as a static inner class below).
+
+            switch (position) {
+                case 0:
+                    return SoundsRecorderLivingFragment.newInstance("1", "1");
+
+                default:
+                    return SoundsRecorderListFragment.newInstance("1", "1");
+            }
+
+        }
+
+        @Override
+        public int getCount() {
+            // Show 3 total pages.
+            return 2;
+        }
     }
 }

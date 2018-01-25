@@ -31,4 +31,8 @@
     <string name="title_activity_loop_task">loopTask</string>
     <string name="title_activity_iik_player">IikPlayerActivity</string>
     <string name="btn_stop">暂停</string>
+    <string name="name_and_save">命名和保存</string>
+    <string name="delete">删除</string>
+    <string name="save">保存</string>
+    <string name="duplication_of_name">命名重复，该文件已存在</string>
 </resources>
