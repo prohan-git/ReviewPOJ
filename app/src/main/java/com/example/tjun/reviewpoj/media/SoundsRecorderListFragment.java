@@ -110,7 +110,6 @@ public class SoundsRecorderListFragment extends BaseFragment {
 
 
     public void refresh() {
-        files = null;
         initData();
         loadList();
     }
